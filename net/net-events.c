@@ -112,7 +112,7 @@ event_t *pop_heap_head (void) {
     ev_heap[i] = y;
     y->in_queue = i;
     i = j;
-  } 
+  }
   ev_heap[i] = x;
   x->in_queue = i;
   return ev;
@@ -256,7 +256,7 @@ int epoll_insert (int fd, int flags) {
   ef = epoll_conv_flags (flags);
   if (ef != ev->epoll_state || (flags & EVT_NEW) || !(ev->state & EVT_IN_EPOLL)) {
     ee.events = ef;
-    ee.data.fd = fd; 
+    ee.data.fd = fd;
 
     vkprintf (1, "epoll_ctl(%d,%d,%d,%d,%08x)\n", epoll_fd, (ev->state & EVT_IN_EPOLL) ? EPOLL_CTL_MOD : EPOLL_CTL_ADD, fd, ee.data.fd, ee.events);
 
@@ -371,7 +371,7 @@ int epoll_run_timers (void) {
     et = et_heap[1];
     assert (et->h_idx == 1);
     remove_event_timer (et);
-    et->wakeup (et); 
+    et->wakeup (et);
   }
   return 0;
 }
@@ -502,7 +502,7 @@ int epoll_work (int timeout) {
 /*
  * end (events)
  */
-  
+
 
 // From memcached.c: socket functions
 
@@ -642,7 +642,7 @@ int server_socket (int port, struct in_addr in_addr, int backlog, int mode) {
   if (!(mode & SM_IPV6)) {
     struct sockaddr_in addr;
     memset (&addr, 0, sizeof (addr));
-  
+
     addr.sin_family = AF_INET;
     addr.sin_port = htons (port);
     addr.sin_addr = in_addr;
@@ -705,7 +705,7 @@ int client_socket (in_addr_t in_addr, int port, int mode) {
   addr.sin_family = AF_INET;
   addr.sin_port = htons (port);
   addr.sin_addr.s_addr = in_addr;
- 
+
   if (connect (sfd, (struct sockaddr *) &addr, sizeof (addr)) == -1 && errno != EINPROGRESS) {
     perror ("connect()");
     close (sfd);
@@ -747,7 +747,7 @@ int client_socket_ipv6 (const unsigned char in6_addr_ptr[16], int port, int mode
   addr.sin6_family = AF_INET6;
   addr.sin6_port = htons (port);
   memcpy (&addr.sin6_addr, in6_addr_ptr, 16);
- 
+
   if (connect (sfd, (struct sockaddr *) &addr, sizeof (addr)) == -1 && errno != EINPROGRESS) {
     perror ("connect()");
     close (sfd);
@@ -760,14 +760,14 @@ int client_socket_ipv6 (const unsigned char in6_addr_ptr[16], int port, int mode
 
 unsigned get_my_ipv4 (void) {
   struct ifaddrs *ifa_first, *ifa;
-  unsigned my_ip = 0, my_netmask = -1; 
+  unsigned my_ip = 0, my_netmask = -1;
   char *my_iface = 0;
   if (getifaddrs (&ifa_first) < 0) {
     perror ("getifaddrs()");
     return 0;
   }
   for (ifa = ifa_first; ifa; ifa = ifa->ifa_next) {
-    if (ifa->ifa_addr->sa_family != AF_INET) {
+    if (!ifa->ifa_addr || (ifa->ifa_addr->sa_family != AF_INET)) {
       continue;
     }
     if (!strncmp (ifa->ifa_name, "lo", 2)) {
@@ -783,7 +783,7 @@ unsigned get_my_ipv4 (void) {
     }
   }
   vkprintf (1, "using main IP %d.%d.%d.%d/%d at interface %s\n", (my_ip >> 24), (my_ip >> 16) & 255, (my_ip >> 8) & 255, my_ip & 255,
-	    __builtin_clz (~my_netmask), my_iface ?: "(none)"); 
+	    __builtin_clz (~my_netmask), my_iface ?: "(none)");
   freeifaddrs (ifa_first);
   return my_ip;
 }
@@ -829,7 +829,7 @@ int conv_ipv6_internal (const unsigned short a[8], char *buf) {
     }
     for (i = k; i < 8; i++) {
       ptr += sprintf (ptr, ":%x", ntohs (a[i]));
-    } 
+    }
   } else {
     for (i = 0; i < 7; i++) {
       ptr += sprintf (ptr, "%x:", ntohs (a[i]));
@@ -869,4 +869,3 @@ char *show_ipv6 (const unsigned char ipv6[16]) {
   ptr += conv_ipv6_internal ((const unsigned short *) ipv6, ptr) + 1;
   return res;
 }
-

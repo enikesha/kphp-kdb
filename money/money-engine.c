@@ -379,11 +379,11 @@ int memcache_store (struct connection *c, int op, const char *key, int key_len, 
       }
       if (*ptr == ':') {
         ++ptr;
-	if (!parse_auth_code (ptr)) {
+        if (!parse_auth_code (ptr)) {
           return 0;
-	}
+        }
         E->T[i].auth_code = (long long) (long) ptr;
-	ptr += 32;
+        ptr += 32;
       } else {
         E->T[i].auth_code = 0;
       }
